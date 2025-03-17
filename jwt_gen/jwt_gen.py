@@ -2,6 +2,7 @@ import jwt
 import os
 import base64
 import time
+import datetime
 import uuid
 import jwt
 from cryptography.hazmat.primitives import serialization
@@ -9,10 +10,10 @@ from cryptography.hazmat.backends import default_backend
 
 PRIVATE_KEY_NAME =  'TEST_PRIVATE_KEY'
 PRIVATE_KEY_PASS_NAME =  'TEST_PRIVATE_KEY_PASS'
-REQUIRED_KEYS =  ['aud', 'email', 'name', 'roles']
-REQUIRED_KEYS_TYPES =  ['str', 'str', 'str', 'list']
+REQUIRED_KEYS =  ['aud', 'email', 'name', 'allowed-actions', 'allowed-data']
+REQUIRED_KEYS_TYPES =  ['str', 'str', 'str', 'list', 'list']
 ISSUER_KEY =  'iss'
-ISSUER_VALUE =  'ref-codes-python'
+ISSUER_VALUE =  'https://lab.shinova.in/'
 ISSUED_AT_KEY = "iat"
 EXPIRES_AT_KEY = "exp"
 EXPIRY_DURATION_MINS = 30
@@ -39,12 +40,11 @@ def createJwt(values:dict):
     payload = values.copy()
     payload[ISSUER_KEY] = ISSUER_VALUE
 
-    ct = round(time.time() * 1000)
+    ct = round(time.time()-1)
     payload[ISSUED_AT_KEY] = ct
-    payload[EXPIRES_AT_KEY] = ct + (EXPIRY_DURATION_MINS * 60 * 1000)
+    payload[EXPIRES_AT_KEY] = ct + (EXPIRY_DURATION_MINS * 60) 
 
     payload[TOKEN_ID_KEY] = str(uuid.uuid4())
 
-    print(f"Payload - {payload}")
     return jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
